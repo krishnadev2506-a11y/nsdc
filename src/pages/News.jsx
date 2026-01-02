@@ -35,56 +35,68 @@ function News() {
       setLoading(true)
       setError(null)
       try {
-        if (keyNewsApi) {
-          const url = 'https://newsapi.org/v2/everything?' +
-                    'q=Apple&' +
-                    'sortBy=popularity&' +
-                    'apiKey=' + keyNewsApi;
-          const response = await fetch(url, { signal: controller.signal })
-          const data = await response.json()
-          console.log('NewsAPI response', data);
-          if (data.articles && data.articles.length) {
-            const items = normalizeNewsApi(data.articles)
-            setArticles(items)
-            setFeatured(items.slice(0,4))
-            setSource('NewsAPI')
-            setError(null)
-            return
-          }
-          if (data.code || data.status === 'error') {
-            setError(data.message || 'NewsAPI error')
+        if (keyGNews) {
+          try {
+            const res = await fetch(`https://gnews.io/api/v4/top-headlines?lang=en&max=12&apikey=${keyGNews}`, { signal: controller.signal })
+            const data = await res.json()
+            if (data.articles && data.articles.length) {
+              const items = normalizeGNews(data.articles)
+              setArticles(items)
+              setFeatured(items.slice(0,4))
+              setSource('GNews')
+              setError(null)
+              return
+            }
+            if (data.code || data.errors) {
+              console.warn(data.message || 'GNews error')
+            }
+          } catch (e) {
+            if (e.name === 'AbortError') throw e
+            console.warn('GNews failed', e)
           }
         }
-        if (keyGNews) {
-          const res = await fetch(`https://gnews.io/api/v4/top-headlines?lang=en&max=12&apikey=${keyGNews}`, { signal: controller.signal })
-          const data = await res.json()
-          console.log('GNews response', data)
-          if (data.articles && data.articles.length) {
-            const items = normalizeGNews(data.articles)
-            setArticles(items)
-            setFeatured(items.slice(0,4))
-            setSource('GNews')
-            setError(null)
-            return
-          }
-          if (data.code || data.errors) {
-            setError(data.message || 'GNews error')
+        if (keyNewsApi) {
+          try {
+            const url = 'https://newsapi.org/v2/everything?' +
+                      'q=Apple&' +
+                      'sortBy=popularity&' +
+                      'apiKey=' + keyNewsApi;
+            const response = await fetch(url, { signal: controller.signal })
+            const data = await response.json()
+            if (data.articles && data.articles.length) {
+              const items = normalizeNewsApi(data.articles)
+              setArticles(items)
+              setFeatured(items.slice(0,4))
+              setSource('NewsAPI')
+              setError(null)
+              return
+            }
+            if (data.code || data.status === 'error') {
+              console.warn(data.message || 'NewsAPI error')
+            }
+          } catch (e) {
+            if (e.name === 'AbortError') throw e
+            console.warn('NewsAPI failed', e)
           }
         }
         if (keyNewsData) {
-          const res = await fetch(`https://newsdata.io/api/1/news?country=us&language=en&apikey=${keyNewsData}`, { signal: controller.signal })
-          const data = await res.json()
-          console.log('NewsData response', data)
-          if (data.results && data.results.length) {
-            const items = normalizeNewsData(data.results)
-            setArticles(items)
-            setFeatured(items.slice(0,4))
-            setSource('NewsData')
-            setError(null)
-            return
-          }
-          if (data.status === 'error') {
-            setError(data.message || 'NewsData error')
+          try {
+            const res = await fetch(`https://newsdata.io/api/1/news?country=us&language=en&apikey=${keyNewsData}`, { signal: controller.signal })
+            const data = await res.json()
+            if (data.results && data.results.length) {
+              const items = normalizeNewsData(data.results)
+              setArticles(items)
+              setFeatured(items.slice(0,4))
+              setSource('NewsData')
+              setError(null)
+              return
+            }
+            if (data.status === 'error') {
+              console.warn(data.message || 'NewsData error')
+            }
+          } catch (e) {
+            if (e.name === 'AbortError') throw e
+            console.warn('NewsData failed', e)
           }
         }
         // if none succeeded, set fallback
@@ -92,6 +104,7 @@ function News() {
         setFeatured(articlesFallback.slice(0,4))
         setSource('Local')
       } catch (e) {
+        if (e.name === 'AbortError') return
         console.error('Fetch error', e)
         setError(e.message)
         setArticles(articlesFallback)
