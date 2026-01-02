@@ -9,10 +9,15 @@ function Home() {
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        const response = await fetch('https://newsapi.org/v2/top-headlines?country=us&apiKey=873f12e52d2246c9b8c7e45669959233')
+        const apiKey = import.meta.env.VITE_API_KEY
+        const response = await fetch(`https://gnews.io/api/v4/top-headlines?category=general&lang=en&country=us&max=10&apikey=${apiKey}`)
         const data = await response.json()
-        if (data.status === 'ok') {
-          setArticles(data.articles)
+        if (data.articles) {
+          const formattedArticles = data.articles.map(article => ({
+            ...article,
+            urlToImage: article.image
+          }))
+          setArticles(formattedArticles)
         } else {
           throw new Error(data.message || 'Failed to fetch news')
         }

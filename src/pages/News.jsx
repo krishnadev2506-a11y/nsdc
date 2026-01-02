@@ -26,8 +26,8 @@ function News() {
     const localKeyNewsApi = localStorage.getItem('astra_key_newsapi')
     const localKeyGNews = localStorage.getItem('astra_key_gnews')
     const localKeyNewsData = localStorage.getItem('astra_key_newsdata')
-    const keyNewsApi = localKeyNewsApi || import.meta.env.VITE_NEWS_API_KEY || '873f12e52d2246c9b8c7e45669959233'
-    const keyGNews = localKeyGNews || import.meta.env.VITE_GNEWS_API_KEY
+    const keyNewsApi = localKeyNewsApi || import.meta.env.VITE_NEWS_API_KEY
+    const keyGNews = localKeyGNews || import.meta.env.VITE_GNEWS_API_KEY || import.meta.env.VITE_API_KEY
     const keyNewsData = localKeyNewsData || import.meta.env.VITE_NEWSDATA_KEY
     const controller = new AbortController()
 
@@ -56,7 +56,7 @@ function News() {
           }
         }
         if (keyGNews) {
-          const res = await fetch(`https://gnews.io/api/v4/top-headlines?lang=en&max=12&token=${keyGNews}`, { signal: controller.signal })
+          const res = await fetch(`https://gnews.io/api/v4/top-headlines?lang=en&max=12&apikey=${keyGNews}`, { signal: controller.signal })
           const data = await res.json()
           console.log('GNews response', data)
           if (data.articles && data.articles.length) {
