@@ -1,0 +1,2 @@
+- [ ] Edit src/pages/News.jsx to remove the 'from=2024-01-02&' parameter from the NewsAPI fetch URL
+- [ ] Set the provided API key "873f12e52d2246c9b8c7e45669959233" as a fallback for keyNewsApi
