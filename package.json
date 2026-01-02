@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://krishnadev2506-a11y.github.io/Nsdc",
+  "homepage": "https://krishnadev2506-a11y.github.io/nsdc",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
